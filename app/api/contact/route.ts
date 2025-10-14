@@ -10,7 +10,12 @@ const SUBJECT = process.env.CONTACT_SUBJECT || "New Catering / Contact Message f
 
 export async function POST(req: Request) {
   try {
-    const { name = "", email = "", phone = "", message = "" } = await req.json();
+ const { name = "", email = "", phone = "", message = "", website = "" } = await req.json();
+
+    // 🛡️ Honeypot anti-spam check
+    if (website) {
+      return NextResponse.json({ ok: true });
+    }
     if (!name || !email || !message) {
       return NextResponse.json({ ok: false, error: "Missing required fields." }, { status: 400 });
     }
