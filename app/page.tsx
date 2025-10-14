@@ -97,6 +97,50 @@ const SafeImage = ({ src, alt, className = "", label }: { src: string, alt?: str
     </div>
   );
 };
+// --- Contact form handler (drop this near the top of app/page.tsx) ---
+function ContactForm() {
+  const [status, setStatus] = React.useState<"idle"|"sending"|"ok"|"error">("idle");
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const payload = {
+      name: String(fd.get("name") || ""),
+      email: String(fd.get("email") || ""),
+      phone: String(fd.get("phone") || ""),
+      message: String(fd.get("message") || ""),
+    };
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      setStatus(data.ok ? "ok" : "error");
+      if (data.ok) (e.currentTarget as HTMLFormElement).reset();
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  return (
+    <form className="grid gap-4" onSubmit={onSubmit}>
+      <input name="name" className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Your name" required />
+      <input name="email" type="email" className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Email" required />
+      <input name="phone" className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Phone" />
+      <textarea name="message" rows={4} className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Tell us about your event or question" required />
+      <Button className="bg-emerald-700 hover:bg-emerald-800" type="submit" disabled={status==="sending"}>
+        {status==="sending" ? "Sending..." : "Send Message"}
+      </Button>
+      {status==="ok" && <div className="text-sm text-emerald-700">Thanks! We’ll get back to you shortly.</div>}
+      {status==="error" && <div className="text-sm text-red-600">Something went wrong. Please try again.</div>}
+    </form>
+  );
+}
+
+
 
 export default function Page() {
   return (
@@ -359,13 +403,8 @@ export default function Page() {
                 <CardTitle>Contact & Catering</CardTitle>
               </CardHeader>
               <CardContent>
-                <form className="grid gap-4">
-                  <input className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Your name" />
-                  <input type="email" className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Email" />
-                  <input className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Phone" />
-                  <textarea rows={4} className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Tell us about your event or question" />
-                  <Button className="bg-emerald-700 hover:bg-emerald-800" type="button">Send Message</Button>
-                </form>
+
+                <ContactForm />
               </CardContent>
             </Card>
             <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
