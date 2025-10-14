@@ -97,19 +97,23 @@ const SafeImage = ({ src, alt, className = "", label }: { src: string, alt?: str
     </div>
   );
 };
-// --- Contact form handler (drop this near the top of app/page.tsx) ---
+// --- Robust ContactForm (paste above the default export in app/page.tsx) ---
 function ContactForm() {
   const [status, setStatus] = React.useState<"idle"|"sending"|"ok"|"error">("idle");
+  const [errorMsg, setErrorMsg] = React.useState<string>("");
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    setErrorMsg("");
+    const formEl = e.currentTarget;
+    const fd = new FormData(formEl);
     const payload = {
       name: String(fd.get("name") || ""),
       email: String(fd.get("email") || ""),
       phone: String(fd.get("phone") || ""),
       message: String(fd.get("message") || ""),
     };
+
     setStatus("sending");
     try {
       const res = await fetch("/api/contact", {
@@ -117,10 +121,18 @@ function ContactForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
-      setStatus(data.ok ? "ok" : "error");
-      if (data.ok) (e.currentTarget as HTMLFormElement).reset();
-    } catch {
+
+      let data: any = {};
+      try { data = await res.json(); } catch { /* ignore parse errors */ }
+
+      if (!res.ok || !data?.ok) {
+        throw new Error(data?.error || `Request failed (${res.status})`);
+      }
+
+      setStatus("ok");
+      formEl.reset(); // clear fields on success
+    } catch (err: any) {
+      setErrorMsg(err?.message || "Unknown error");
       setStatus("error");
     }
   };
@@ -135,11 +147,10 @@ function ContactForm() {
         {status==="sending" ? "Sending..." : "Send Message"}
       </Button>
       {status==="ok" && <div className="text-sm text-emerald-700">Thanks! We’ll get back to you shortly.</div>}
-      {status==="error" && <div className="text-sm text-red-600">Something went wrong. Please try again.</div>}
+      {status==="error" && <div className="text-sm text-red-600">Something went wrong. Please try again. {errorMsg && <span className="opacity-70">({errorMsg})</span>}</div>}
     </form>
   );
 }
-
 
 
 export default function Page() {
