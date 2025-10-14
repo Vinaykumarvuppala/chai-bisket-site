@@ -142,6 +142,7 @@ function ContactForm() {
       <input name="name" className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Your name" required />
       <input name="email" type="email" className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Email" required />
       <input name="phone" className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Phone" />
+      <input name="website" className="hidden" tabIndex={-1} autoComplete="off" />
       <textarea name="message" rows={4} className="border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="Tell us about your event or question" required />
       <Button className="bg-emerald-700 hover:bg-emerald-800" type="submit" disabled={status==="sending"}>
         {status==="sending" ? "Sending..." : "Send Message"}
