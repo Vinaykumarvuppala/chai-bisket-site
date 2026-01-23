@@ -6,7 +6,7 @@ const TO = process.env.CONTACT_TO || "chaibisketllc@gmail.com";
 const CC = process.env.CONTACT_CC || "";
 const SHEETS_WEBHOOK_URL = process.env.SHEETS_WEBHOOK_URL || "";
 const FROM = process.env.CONTACT_FROM || "Chai Bisket <onboarding@resend.dev>";
-const SUBJECT = process.env.CONTACT_SUBJECT || "New Catering / Contact Message from Chai Bisket";
+const SUBJECT = process.env.CONTACT_SUBJECT || "New bulkorders / Contact Message from Chai Bisket";
 
 export async function POST(req: Request) {
   try {
