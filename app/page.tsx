@@ -27,6 +27,17 @@ export default function Page() {
         >
           Follow @chaibisket_eats →
         </a>
+
+        <div className="mt-6">
+          <a
+            href="https://toast.app/r/chaibisketcumming/order/r-9f821d95-74d6-4406-bf49-314857348548?diningOption=takeout"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-7 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+          >
+            Order Online ↗
+          </a>
+        </div>
       </div>
     </main>
   );
